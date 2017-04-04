@@ -4,14 +4,15 @@ import java.io.FileNotFoundException;
 
 import org.apache.commons.io.IOUtils;
 import java.io.IOException;
-//import java.util.regex;
+import java.util.ArrayList;
+import java.util.Collection;
 public class Application {
 	
 	public static void main(String [] args) throws IOException
 	{
 		
-		Pair pair=new Pair("cat",1);	
-		System.out.println(pair.toString());
+		//Pair pair=new Pair("cat",1);	
+		//System.out.println(pair.toString());
 		String str="";
 		
 		try {
@@ -22,14 +23,22 @@ public class Application {
 			System.out.println("---"+e.getMessage());
 		}
 		
-		//  String str1 = "This is a string of words";
 		  String [] stringOfWords = str.split(" ");
-		  for(int i=0;i<stringOfWords.length;i++)
-		  {
-			  System.out.println(stringOfWords[i]);
-		  }
+		  Collection <Pair >collection=new ArrayList ();
 		
-		
+			  for (String s : stringOfWords) 
+			  {
+				  s=s.toLowerCase();
+					if (s.matches("^[A-Za-z][A-Za-z0-9]*$")) {
+						collection.add(new Pair(s,1));
+						//System.out.println(s);
+						
+					}
+			  }
+			  
+		PairComparator comparator=new PairComparator();
+		Pair.sort(collection, comparator);
+		System.out.println(collection.toString());
 		
 	}
 	

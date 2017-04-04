@@ -1,5 +1,10 @@
 
-public class Pair {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class Pair implements Comparable<Pair> {
 	
 	private String key;
 	private int value;
@@ -23,7 +28,22 @@ public class Pair {
 	}
 	@Override
 	public String toString() {
-		return "(" + key + "," + value + ")";
+		return "(" + key + "," + value + ")\n";
 	}
+	
+	@Override
+	public int compareTo(Pair p) {
+		
+		return this.key.compareTo(p.key);
+	}
+	
+	public static <T> List<T> sort(Collection<T> self, Comparator<T> comparator) {
+		  List<T> list = (List<T>) self;
+		  Collections.sort(list, comparator);
+		  return list;
+		}
+	
+
+	
 
 }
