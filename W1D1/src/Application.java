@@ -11,8 +11,6 @@ public class Application {
 	public static void main(String [] args) throws IOException
 	{
 		
-		//Pair pair=new Pair("cat",1);	
-		//System.out.println(pair.toString());
 		String str="";
 		
 		try {
@@ -23,19 +21,22 @@ public class Application {
 			System.out.println("---"+e.getMessage());
 		}
 		
-		  String [] stringOfWords = str.split(" ");
+		//str="  5. Note that tokens such as input123, abc.txt,  a23bc and abc_ptr  are not words. However, key-value is two words.";
+		
+		  String [] stringOfWords = str.split("[- ,.\"]+");
 		  Collection <Pair >collection=new ArrayList ();
 		
 			  for (String s : stringOfWords) 
 			  {
 				  s=s.toLowerCase();
-					if (s.matches("^[A-Za-z][A-Za-z0-9]*$")) {
+					if (s.matches("^[A-Za-z][A-Za-z]*$")) {
 						collection.add(new Pair(s,1));
 						//System.out.println(s);
 						
 					}
 			  }
 			  
+		
 		PairComparator comparator=new PairComparator();
 		Pair.sort(collection, comparator);
 		System.out.println(collection.toString());
@@ -59,6 +60,5 @@ public class Application {
 		
 		return targetFileString;
 	}
-
 
 }

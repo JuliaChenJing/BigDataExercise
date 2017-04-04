@@ -28,7 +28,7 @@ public class Pair implements Comparable<Pair> {
 	}
 	@Override
 	public String toString() {
-		return "(" + key + "," + value + ")\n";
+		return "\n(" + key + "," + value + ")";
 	}
 	
 	@Override
@@ -37,6 +37,8 @@ public class Pair implements Comparable<Pair> {
 		return this.key.compareTo(p.key);
 	}
 	
+	
+	  
 	public static <T> List<T> sort(Collection<T> self, Comparator<T> comparator) {
 		  List<T> list = (List<T>) self;
 		  Collections.sort(list, comparator);
