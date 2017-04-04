@@ -13,6 +13,7 @@ public class Application {
 		
 		String str="";
 		
+		// read the txt file to string
 		try {
 			 str=readFile();
 			//System.out.println(str);
@@ -23,26 +24,32 @@ public class Application {
 		
 		//str="  5. Note that tokens such as input123, abc.txt,  a23bc and abc_ptr  are not words. However, key-value is two words.";
 		
+		//split the long string to array of strings
 		  String [] stringOfWords = str.split("[- ,.\"]+");
 		  Collection <Pair >collection=new ArrayList ();
 		
 			  for (String s : stringOfWords) 
 			  {
+				  //make all string to lower case
 				  s=s.toLowerCase();
+				  // if the string is an english word
 					if (s.matches("^[A-Za-z][A-Za-z]*$")) {
+						// put it in collection
 						collection.add(new Pair(s,1));
 						//System.out.println(s);
 						
 					}
 			  }
 			  
-		
+		//sort the collection from a to z
 		PairComparator comparator=new PairComparator();
 		Pair.sort(collection, comparator);
+		// print out the collection
 		System.out.println(collection.toString());
 		
 	}
 	
+	// read the txt file and store it to a string
    static String readFile() 
 	{
 		String targetFileString="";
