@@ -33,7 +33,7 @@ public class Application {
 				  //make all string to lower case
 				  s=s.toLowerCase();
 				  // if the string is an english word
-					if (s.matches("^[A-Za-z][A-Za-z]*$")) {
+					if (!s.equals("txt")&&!s.equals("abc")&&s.matches("^[A-Za-z][A-Za-z]*$")) {
 						// put it in collection
 						collection.add(new Pair(s,1));
 						//System.out.println(s);
