@@ -15,9 +15,10 @@ public class Application {
 	public static void main(String [] args) throws IOException
 	{
 		
-		String str="";
+		
 		
 		// read the txt file to string
+		String str="";
 		try {
 			 str=readFile();
 			//System.out.println(str);
@@ -26,7 +27,7 @@ public class Application {
 			System.out.println("---"+e.getMessage());
 		}
 		
-		//str="  5. Note that tokens such as input123, abc.txt,  a23bc and abc_ptr  are not words. However, key-value is two words.";
+		//str=" Test: 5. Note that tokens such as input123, abc.txt,  a23bc and abc_ptr  are not words. However, key-value is two words.";
 		
 		//split the long string to array of strings
 		  String [] stringOfWords = str.split("[- ,.\"]+");
@@ -52,13 +53,16 @@ public class Application {
 		System.out.println("---------------------------Mapper Output-------------");
 		System.out.println(collectionOfPair.toString());
 		
+		
+		// -Reducer Input--
 		 String strtemp="";
 		 String strNext="";
 		 int n=1;
-		 for (Iterator <Pair> it =collectionOfPair.iterator();  it.hasNext(); )
+		 Iterator <Pair> it =collectionOfPair.iterator();
+		 while (  it.hasNext() )
 		 {
-			 
 			 strNext=it.next().getKey();
+			 
 			 if(strtemp.equals(strNext))
 			 {
 				 n++;
@@ -78,19 +82,23 @@ public class Application {
 				 
 				 strtemp=strNext;
 				
-				// System.out.println(strtemp);
 			 } 
-			
 			 
 		 }
+		 
+		 List <Integer> list=new ArrayList <Integer> ();
+		 for(int i=0;i<n;i++)
+			 list.add(1);
+		 collectionOfGroupByPair.add(new GroupByPair(strtemp,list)); 
 		       
 		System.out.println("---------------------------Reducer Input------------");
 		System.out.println(collectionOfGroupByPair.toString());
 		
 		System.out.println("---------------------------Reducer Output------------");
-		 for (Iterator <GroupByPair> it =collectionOfGroupByPair.iterator(); it.hasNext(); )
+		
+		for (Iterator <GroupByPair> it_2 =collectionOfGroupByPair.iterator(); it_2.hasNext(); )
 		 {
-			GroupByPair temp=it.next();
+			GroupByPair temp=it_2.next();
 	    	System.out.println(temp.toString_reducerOutput());
 		 }
 		
