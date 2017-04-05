@@ -53,26 +53,32 @@ public class Application {
 		System.out.println(collectionOfPair.toString());
 		
 		 String strtemp="";
+		 String strNext="";
 		 int n=1;
-		 for (Iterator <Pair> it =collectionOfPair.iterator(); it.hasNext(); )
+		 for (Iterator <Pair> it =collectionOfPair.iterator();  it.hasNext(); )
 		 {
 			 
-			 if(strtemp.equals(it.next().getKey()))
+			 strNext=it.next().getKey();
+			 if(strtemp.equals(strNext))
 			 {
 				 n++;
 			 }
 			 else
 			 {
+				
 				 if(!strtemp.equals(""))
 				 {
+					 
 					 List <Integer> list=new ArrayList <Integer> ();
-					 for(int i=0;i<=n;i++)
+					 for(int i=0;i<n;i++)
 						 list.add(1);
 					 collectionOfGroupByPair.add(new GroupByPair(strtemp,list)); 
 					 n=1;
 				 }
-				 strtemp=it.next().getKey();
-				 //System.out.println(strtemp);
+				 
+				 strtemp=strNext;
+				
+				// System.out.println(strtemp);
 			 } 
 			
 			 
