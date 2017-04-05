@@ -72,8 +72,9 @@ public class Application {
 					 n=1;
 				 }
 				 strtemp=it.next().getKey();
-			
+				 //System.out.println(strtemp);
 			 } 
+			
 			 
 		 }
 		       
