@@ -23,7 +23,7 @@ public class GroupByPair {
 	
 	public String toString_reducerOutput() {
 		
-		return "\n(" + key + "," + values.size()+ ")";
+		return "(" + key + "," + values.size()+ ")";
 	}
 	
 	public String getKey() {
