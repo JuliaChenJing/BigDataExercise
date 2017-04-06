@@ -6,14 +6,14 @@ public class WordCount {
 
 
 	List <Pair>  mappers;
-	List <GroupOfPair>  reducers;
+	List <GroupByPair>  reducers;
 	
 	WordCount()
 	{
 		
 	}
 	
-	public WordCount(List<Pair> mappers, List<GroupOfPair> reducers) {
+	public WordCount(List<Pair> mappers, List<GroupByPair> reducers) {
 		super();
 		this.mappers = mappers;
 		this.reducers = reducers;
@@ -36,12 +36,12 @@ public class WordCount {
 	}
 
 
-	public List<GroupOfPair> getReducers() {
+	public List<GroupByPair> getReducers() {
 		return reducers;
 	}
 
 
-	public void setReducers(List<GroupOfPair> reducers) {
+	public void setReducers(List<GroupByPair> reducers) {
 		this.reducers = reducers;
 	}
 }

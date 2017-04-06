@@ -6,7 +6,6 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,7 +13,6 @@ public class Application {
 	
 	public static void main(String [] args) throws IOException
 	{
-		
 		
 		
 		// read the txt file to string
@@ -27,29 +25,9 @@ public class Application {
 			System.out.println("---"+e.getMessage());
 		}
 		
-		//str=" Test: 5. Note that tokens such as input123, abc.txt,  a23bc and abc_ptr  are not words. However, key-value is two words.";
-		
-		//split the long string to array of strings
-		  String [] stringOfWords = str.split("[- ,.\"]+");
-		  Collection <Pair>collectionOfPair=new ArrayList ();
-		  Collection <GroupOfPair >collectionOfGroupByPair=new ArrayList ();
-		
-			  for (String s : stringOfWords) 
-			  {
-				  //make all string to lower case
-				  s=s.toLowerCase();
-				  
-				  // if the string is an english word
-					if (!s.equals("txt")&&!s.equals("abc")&&s.matches("^[A-Za-z][A-Za-z]*$")) {
-						// put it in collections
-					    
-						collectionOfPair.add(new Pair(s,1));
-					}
-			  }
-			  
-		//sort the collection from a to z
-		PairComparator comparatorOfPair=new PairComparator();
-		Pair.sort(collectionOfPair, comparatorOfPair);
+		Mapper mapper=new Mapper();
+		 Collection <Pair>collectionOfPair=mapper.mapperOutput(str);
+
 		System.out.println("---------------------------Mapper Output-------------");
 		System.out.println(collectionOfPair.toString());
 		
@@ -57,6 +35,7 @@ public class Application {
 		// -Reducer Input--
 		 String strtemp="";
 		 String strNext="";
+		 List <GroupByPair> collectionOfGroupByPair=new ArrayList <GroupByPair> ();
 		 int n=1;
 		 Iterator <Pair> it =collectionOfPair.iterator();
 		 while (  it.hasNext() )
@@ -76,7 +55,7 @@ public class Application {
 					 List <Integer> list=new ArrayList <Integer> ();
 					 for(int i=0;i<n;i++)
 						 list.add(1);
-					 collectionOfGroupByPair.add(new GroupOfPair(strtemp,list)); 
+					 collectionOfGroupByPair.add(new GroupByPair(strtemp,list)); 
 					 n=1;
 				 }
 				 
@@ -89,16 +68,16 @@ public class Application {
 		 List <Integer> list=new ArrayList <Integer> ();
 		 for(int i=0;i<n;i++)
 			 list.add(1);
-		 collectionOfGroupByPair.add(new GroupOfPair(strtemp,list)); 
+		 collectionOfGroupByPair.add(new GroupByPair(strtemp,list)); 
 		       
 		System.out.println("---------------------------Reducer Input------------");
 		System.out.println(collectionOfGroupByPair.toString());
 		
 		System.out.println("---------------------------Reducer Output------------");
 		
-		for (Iterator <GroupOfPair> it_2 =collectionOfGroupByPair.iterator(); it_2.hasNext(); )
+		for (Iterator <GroupByPair> it_2 =collectionOfGroupByPair.iterator(); it_2.hasNext(); )
 		 {
-			GroupOfPair temp=it_2.next();
+			GroupByPair temp=it_2.next();
 	    	System.out.println(temp.toString_reducerOutput());
 		 }
 		
