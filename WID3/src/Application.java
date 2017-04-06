@@ -13,7 +13,7 @@ public class Application {
 	public static void main(String [] args) throws IOException
 	{
 		
-		
+		//----------------------------Map Input-----------------------
 		// read the txt file to string
 		List <String> inputSplits=new ArrayList<String>();
 		int numOfReducers=4;
@@ -31,15 +31,16 @@ public class Application {
 			System.out.println("---"+e.getMessage());
 		}
 		
+		for(int i=0;i<inputSplits.size();i++)
+		{ 
+			System.out.println("---------------------------Mapper"+i+" Input-------------");
+			System.out.println(inputSplits.get(i));
+		}
 		
-		System.out.println("---------------------------Mapper 0 Input-------------");
-		System.out.println(inputSplits.get(0));
 		
-		System.out.println("---------------------------Mapper 1 Input-------------");
-		System.out.println(inputSplits.get(1));
 		
-		System.out.println("---------------------------Mapper 2 Input-------------");
-		System.out.println(inputSplits.get(2));
+		
+		//----------------------------Map Input-----------------------
 		
 		Mapper mapper=new Mapper();
 		
@@ -48,19 +49,16 @@ public class Application {
 		mapperOutputs.add(mapper.mapperOutput(inputSplits.get(1)));
 		mapperOutputs.add(mapper.mapperOutput(inputSplits.get(2)));
 		
+		for(int i=0;i<inputSplits.size();i++)
+		{
+			System.out.println("---------------------------Mapper"+i+" Output-------------");
+			System.out.println(mapperOutputs.get(i).toString());
+		}
 
-		System.out.println("---------------------------Mapper 0 Output-------------");
-		System.out.println(mapperOutputs.get(0).toString());
-		
-		System.out.println("---------------------------Mapper 1 Output-------------");
-		System.out.println(mapperOutputs.get(1).toString());
-		
-		System.out.println("---------------------------Mapper 2 Output-------------");
-		System.out.println(mapperOutputs.get(2).toString());
 
 		
 		
-		// -Reducer Input--
+		//----------------------------Reducer Input-----------------------
 		
 	
 		List 	<List <Pair> >  reducerInputs=new ArrayList<List <Pair> >();
@@ -72,7 +70,7 @@ public class Application {
 		}
 		Iterator <Pair> it =mapperOutputs.get(0).iterator();
 		
-		int noOfRecuderInput;
+	
 		 while (  it.hasNext() )
 		 {
 			 Pair tempPair=it.next();
@@ -89,6 +87,8 @@ public class Application {
 		System.out.println("---------------------------Reducer Input------------");
 		System.out.println(collectionOfGroupByPair.toString());
 		
+		
+		//----------------------------Reducer Input-----------------------
 		System.out.println("---------------------------Reducer Output------------");
 		
 		for (Iterator <GroupByPair> it_2 =collectionOfGroupByPair.iterator(); it_2.hasNext(); )
