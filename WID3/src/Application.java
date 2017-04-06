@@ -88,7 +88,7 @@ public class Application {
 
 				System.out.println(
 						"-------------------------Pairs sent from Mapper" + i + " to  Reducer" + j + "------");
-				System.out.println(fromMapperToReduce.get(i));
+				System.out.println(fromMapperToReduce.get(j));
 			}
 		}
 
