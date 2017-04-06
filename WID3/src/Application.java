@@ -43,25 +43,47 @@ public class Application {
 		
 		Mapper mapper=new Mapper();
 		
-		List <Pair> mapperOutput_0=mapper.mapperOutput(inputSplits.get(0));
-		List <Pair> mapperOutput_1=mapper.mapperOutput(inputSplits.get(1));
-		List <Pair> mapperOutput_2=mapper.mapperOutput(inputSplits.get(2));
+		List 	<List <Pair> >  mapperOutputs=new ArrayList<List <Pair> >();
+		mapperOutputs.add(mapper.mapperOutput(inputSplits.get(0)));
+		mapperOutputs.add(mapper.mapperOutput(inputSplits.get(1)));
+		mapperOutputs.add(mapper.mapperOutput(inputSplits.get(2)));
+		
 
 		System.out.println("---------------------------Mapper 0 Output-------------");
-		System.out.println(mapperOutput_0.toString());
+		System.out.println(mapperOutputs.get(0).toString());
 		
 		System.out.println("---------------------------Mapper 1 Output-------------");
-		System.out.println(mapperOutput_1.toString());
+		System.out.println(mapperOutputs.get(1).toString());
 		
 		System.out.println("---------------------------Mapper 2 Output-------------");
-		System.out.println(mapperOutput_2.toString());
+		System.out.println(mapperOutputs.get(2).toString());
 
 		
 		
 		// -Reducer Input--
+		
+	
+		List 	<List <Pair> >  reducerInputs=new ArrayList<List <Pair> >();
+		for(int i=0;i<numOfReducers;i++)
+		{
+			List <Pair> listPairTemp=new ArrayList <Pair>();
+			reducerInputs.add(listPairTemp);
+			
+		}
+		Iterator <Pair> it =mapperOutputs.get(0).iterator();
+		
+		int noOfRecuderInput;
+		 while (  it.hasNext() )
+		 {
+			 Pair tempPair=it.next();
+			 String key=tempPair.getKey();
+			 List <Pair> listPairTemp= reducerInputs.get(WordCount.getPartition(key, numOfReducers));
+			 listPairTemp.add(tempPair);
+					 
+		 }
 		Reducer reducer=new Reducer();
 		
-		 List <GroupByPair> collectionOfGroupByPair=reducer.reducerOutput((ArrayList)mapperOutput_0);
+		 List <GroupByPair> collectionOfGroupByPair=reducer.reducerOutput((ArrayList)mapperOutputs.get(0));
 		
 		       
 		System.out.println("---------------------------Reducer Input------------");
