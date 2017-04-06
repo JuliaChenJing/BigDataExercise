@@ -26,49 +26,18 @@ public class Application {
 		}
 		
 		Mapper mapper=new Mapper();
-		 Collection <Pair>collectionOfPair=mapper.mapperOutput(str);
+		
+		 List <Pair>collectionOfPair=mapper.mapperOutput(str);
 
 		System.out.println("---------------------------Mapper Output-------------");
 		System.out.println(collectionOfPair.toString());
 		
 		
 		// -Reducer Input--
-		 String strtemp="";
-		 String strNext="";
-		 List <GroupByPair> collectionOfGroupByPair=new ArrayList <GroupByPair> ();
-		 int n=1;
-		 Iterator <Pair> it =collectionOfPair.iterator();
-		 while (  it.hasNext() )
-		 {
-			 strNext=it.next().getKey();
-			 
-			 if(strtemp.equals(strNext))
-			 {
-				 n++;
-			 }
-			 else
-			 {
-				
-				 if(!strtemp.equals(""))
-				 {
-					 
-					 List <Integer> list=new ArrayList <Integer> ();
-					 for(int i=0;i<n;i++)
-						 list.add(1);
-					 collectionOfGroupByPair.add(new GroupByPair(strtemp,list)); 
-					 n=1;
-				 }
-				 
-				 strtemp=strNext;
-				
-			 } 
-			 
-		 }
-		 
-		 List <Integer> list=new ArrayList <Integer> ();
-		 for(int i=0;i<n;i++)
-			 list.add(1);
-		 collectionOfGroupByPair.add(new GroupByPair(strtemp,list)); 
+		Reducer reducer=new Reducer();
+		
+		 List <GroupByPair> collectionOfGroupByPair=reducer.reducerOutput((ArrayList)collectionOfPair);
+		
 		       
 		System.out.println("---------------------------Reducer Input------------");
 		System.out.println(collectionOfGroupByPair.toString());

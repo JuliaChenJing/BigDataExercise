@@ -2,20 +2,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 public class GroupByPair {
+	
+	String key;
+	List <Integer> values;
 	
 	public GroupByPair(String key,List <Integer> values) {
 
 		this.key = key;
 		this.values=values;
-		numOfValues=0;
+		
 	}
-	String key;
-	List <Integer> values;
-	private int numOfValues;
+	
 	@Override
 	public String toString() {
 		return "\n<" + key + "," + values + ">";

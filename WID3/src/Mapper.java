@@ -1,13 +1,12 @@
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class Mapper {
 	
-	 public static  Collection <Pair> mapperOutput(String str)
+	 public static  ArrayList <Pair> mapperOutput(String str)
 	 {
 		 
 		 String [] stringOfWords = str.split("[- ,.\"]+");
-		  Collection <Pair>collectionOfPair=new ArrayList ();
+		  ArrayList <Pair>collectionOfPair=new ArrayList ();
 		
 		
 			  for (String s : stringOfWords) 
