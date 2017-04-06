@@ -30,6 +30,7 @@ public class Application {
 			System.out.println("---" + e.getMessage());
 		}
 
+		 
 		for (int i = 0; i < inputSplits.size(); i++) {
 			System.out.println("---------------------------Mapper" + i + " Input-------------");
 			System.out.println(inputSplits.get(i));
