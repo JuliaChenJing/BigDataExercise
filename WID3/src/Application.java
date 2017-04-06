@@ -75,22 +75,29 @@ public class Application {
 
 		}
 
+		Reducer reducer = new Reducer();
 		for (int i = 0; i < numOfReducers; i++) {
 			System.out.println("---------------------------Reducer" + i + " Input-------------");
-			System.out.println(reducerInputs.get(i).toString());
+			System.out.println(reducer.reducerOutput(reducerInputs.get(i)).toString());
 		}
 
 		// ----------------------------Reducer Output-----------------------
 
-		Reducer reducer = new Reducer();
+		
 
-		List<GroupByPair> collectionOfGroupByPair = reducer.reducerOutput((ArrayList) mapperOutputs.get(0));
-		System.out.println("---------------------------Reducer Output------------");
+		for (int i = 0; i < numOfReducers; i++) {
+			System.out.println("---------------------------Reducer" + i + " Output-------------");
+			List<GroupByPair> collectionOfGroupByPair = reducer.reducerOutput(reducerInputs.get(i));
+			
 
-		for (Iterator<GroupByPair> it_2 = collectionOfGroupByPair.iterator(); it_2.hasNext();) {
-			GroupByPair temp = it_2.next();
-			System.out.println(temp.toString_reducerOutput());
+			for (Iterator<GroupByPair> it_2 = collectionOfGroupByPair.iterator(); it_2.hasNext();) {
+				GroupByPair temp = it_2.next();
+				System.out.println(temp.toString_reducerOutput());
+			}
 		}
+		
+		
+		
 
 	}
 
