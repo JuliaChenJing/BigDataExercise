@@ -95,6 +95,7 @@ public class Application {
 		Reducer reducer = new Reducer();
 		for (int i = 0; i < numOfReducers; i++) {
 			System.out.println("---------------------------Reducer" + i + " Input-------------");
+			//System.out.println(reducerInputs.get(i));
 			System.out.println(reducer.reducerOutput(reducerInputs.get(i)).toString());
 		}
 

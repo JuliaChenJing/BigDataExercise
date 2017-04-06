@@ -8,6 +8,8 @@ public class Reducer {
 	 {
 		 String strtemp="";
 		 String strNext="";
+		 PairComparator comparatorOfGroupByPair=new PairComparator();
+		 Pair.sort(collectionOfPair, comparatorOfGroupByPair);
 		 List <GroupByPair> collectionOfGroupByPair=new ArrayList <GroupByPair> ();
 		 int n=1;
 		 Iterator <Pair> it =collectionOfPair.iterator();
