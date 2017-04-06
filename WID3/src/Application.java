@@ -51,28 +51,45 @@ public class Application {
 
 		// ----------------------------Reducer Input-----------------------
 
+		// create a certain number of reducerInputs, each reducerInput is a List
+		// of Pair, in this case it is 4
 		List<List<Pair>> reducerInputs = new ArrayList<List<Pair>>();
+		
 		for (int i = 0; i < numOfReducers; i++) {
 			List<Pair> listPairTemp = new ArrayList<Pair>();
 			reducerInputs.add(listPairTemp);
 
 		}
 
+		// for every mapperOutputs
 		for (int i = 0; i < mapperOutputs.size(); i++) {
 
+			// create an iterator for each of a mapperOutput
 			Iterator<Pair> it = mapperOutputs.get(i).iterator();
+
+			List<List<Pair>> fromMapperToReduce = new ArrayList<List<Pair>>();
 			for (int j = 0; j < numOfReducers; j++) {
-				while (it.hasNext()) {
-					Pair tempPair = it.next();
-					String key = tempPair.getKey();
-					List<Pair> listPairTemp = reducerInputs.get(WordCount.getPartition(key, numOfReducers));
-					listPairTemp.add(tempPair);
+				List<Pair> listPairTemp = new ArrayList<Pair>();
+				fromMapperToReduce.add(listPairTemp);
 
-				}
-				System.out.println("-------------------------Pairs send from Mapper" + i + " to  Reducer" + j+"------");
 			}
-			// System.out.println(listPairTemp);
+			
+			
+			while (it.hasNext()) {
+				Pair tempPair = it.next();
+				String key = tempPair.getKey();
+				// decide which reducerInput should this Pair go based on key
+				int reduceNo = WordCount.getPartition(key, numOfReducers);
+				List<Pair> listPairTemp = reducerInputs.get(reduceNo);
+				listPairTemp.add(tempPair);
+				fromMapperToReduce.get(reduceNo).add(tempPair);
+			}
+			for (int j = 0; j < numOfReducers; j++) {
 
+				System.out.println(
+						"-------------------------Pairs sent from Mapper" + i + " to  Reducer" + j + "------");
+				System.out.println(fromMapperToReduce.get(i));
+			}
 		}
 
 		Reducer reducer = new Reducer();
@@ -83,21 +100,15 @@ public class Application {
 
 		// ----------------------------Reducer Output-----------------------
 
-		
-
 		for (int i = 0; i < numOfReducers; i++) {
 			System.out.println("---------------------------Reducer" + i + " Output-------------");
 			List<GroupByPair> collectionOfGroupByPair = reducer.reducerOutput(reducerInputs.get(i));
-			
 
 			for (Iterator<GroupByPair> it_2 = collectionOfGroupByPair.iterator(); it_2.hasNext();) {
 				GroupByPair temp = it_2.next();
 				System.out.println(temp.toString_reducerOutput());
 			}
 		}
-		
-		
-		
 
 	}
 
