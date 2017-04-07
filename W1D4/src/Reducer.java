@@ -4,15 +4,15 @@ import java.util.List;
 
 public class Reducer {
 	
-	 public static List <GroupByPair> reducerOutput(List <Pair>collectionOfPair)
+	 public static List <GroupByPair> reducerOutput(List <GroupByPair>collectionOfPair)
 	 {
 		 String strtemp="";
 		 String strNext="";
-		 PairComparator comparatorOfGroupByPair=new PairComparator();
-		 Pair.sort(collectionOfPair, comparatorOfGroupByPair);
+		 GroupByPairComparator comparatorOfGroupByPair=new GroupByPairComparator();
+		 GroupByPair.sort(collectionOfPair, comparatorOfGroupByPair);
 		 List <GroupByPair> collectionOfGroupByPair=new ArrayList <GroupByPair> ();
 		 int n=1;
-		 Iterator <Pair> it =collectionOfPair.iterator();
+		 Iterator <GroupByPair> it =collectionOfPair.iterator();
 		 while (  it.hasNext() )
 		 {
 			 strNext=it.next().getKey();

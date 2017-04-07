@@ -49,15 +49,15 @@ public class Application {
 			System.out.println("---------------------------Mapper" + i + " Output-------------");
 			System.out.println(mapperOutputs.get(i).toString());
 		}
-/*
+
 		// ----------------------------Reducer Input-----------------------
 
 		// create a certain number of reducerInputs, each reducerInput is a List
 		// of Pair, in this case it is 4
-		List<List<Pair>> reducerInputs = new ArrayList<List<Pair>>();
+		List<List<GroupByPair>> reducerInputs = new ArrayList<List<GroupByPair>>();
 		
 		for (int i = 0; i < numOfReducers; i++) {
-			List<Pair> listPairTemp = new ArrayList<Pair>();
+			List<GroupByPair> listPairTemp = new ArrayList<GroupByPair>();
 			reducerInputs.add(listPairTemp);
 
 		}
@@ -66,22 +66,23 @@ public class Application {
 		for (int i = 0; i < mapperOutputs.size(); i++) {
 
 			// create an iterator for each of a mapperOutput
-			Iterator<Pair> it = mapperOutputs.get(i).iterator();
+			//initiation 
+			Iterator<GroupByPair> it = mapperOutputs.get(i).iterator();
 
-			List<List<Pair>> fromMapperToReduce = new ArrayList<List<Pair>>();
+			List<List<GroupByPair>> fromMapperToReduce = new ArrayList<List<GroupByPair>>();
 			for (int j = 0; j < numOfReducers; j++) {
-				List<Pair> listPairTemp = new ArrayList<Pair>();
+				List<GroupByPair> listPairTemp = new ArrayList<GroupByPair>();
 				fromMapperToReduce.add(listPairTemp);
 
 			}
 			
 			
 			while (it.hasNext()) {
-				Pair tempPair = it.next();
+				GroupByPair tempPair = it.next();
 				String key = tempPair.getKey();
 				// decide which reducerInput should this Pair go based on key
 				int reduceNo = WordCount.getPartition(key, numOfReducers);
-				List<Pair> listPairTemp = reducerInputs.get(reduceNo);
+				List<GroupByPair> listPairTemp = reducerInputs.get(reduceNo);
 				listPairTemp.add(tempPair);
 				fromMapperToReduce.get(reduceNo).add(tempPair);
 			}
@@ -108,10 +109,11 @@ public class Application {
 
 			for (Iterator<GroupByPair> it_2 = collectionOfGroupByPair.iterator(); it_2.hasNext();) {
 				GroupByPair temp = it_2.next();
-				System.out.println(temp.toString_reducerOutput());
+				System.out.println(temp.toString());
 			}
+			
 		}
-*/
+
 	}
 
 	// read the txt file and store it to a string
