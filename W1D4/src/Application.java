@@ -47,7 +47,9 @@ public class Application {
 		
 		for (int i = 0; i < inputSplits.size(); i++) {
 			System.out.println("---------------------------Mapper" + i + " Output-------------");
-			System.out.println(mapperOutputs.get(i).toString());
+			
+			for(int j=0;j<mapperOutputs.get(i).size();j++)
+			System.out.println(mapperOutputs.get(i).get(j).toString_showSize());
 		}
 
 		// ----------------------------Reducer Input-----------------------
@@ -90,7 +92,8 @@ public class Application {
 
 				System.out.println(
 						"-------------------------Pairs sent from Mapper" + i + " to  Reducer" + j + "------");
-				System.out.println(fromMapperToReduce.get(j));
+				for(int k=0;k<fromMapperToReduce.get(j).size();k++)
+				System.out.println(fromMapperToReduce.get(j).get(k).toString_showSize());
 			}
 		}
 
@@ -98,7 +101,7 @@ public class Application {
 		for (int i = 0; i < numOfReducers; i++) {
 			System.out.println("---------------------------Reducer" + i + " Input-------------");
 			//System.out.println(reducerInputs.get(i));
-			System.out.println(reducer.reducerOutput(reducerInputs.get(i)).toString());
+			System.out.println(reducer.combineReducerInput(reducerInputs.get(i)).toString());
 		}
 
 		// ----------------------------Reducer Output-----------------------
@@ -113,7 +116,7 @@ public class Application {
 		for (int i = 0; i < numOfReducers; i++) {
 			System.out.println("---------------------------Reducer" + i + " Output-------------");
 			List<GroupByPair> tempList=new ArrayList<GroupByPair>();
-			tempList=reducer.reducerOutput(reducerInputs.get(i));
+			tempList=reducer.combineReducerInput(reducerInputs.get(i));
 			reducerOutputs.add(tempList);
 
 			for (Iterator<GroupByPair> it_2 = tempList.iterator(); it_2.hasNext();) {

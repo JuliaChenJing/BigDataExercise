@@ -16,8 +16,19 @@ public class GroupByPair {
 		
 	}
 	
+	public GroupByPair()
+	{
+		
+	}
+	
 	@Override
 	public String toString() {
+		return "\n<"+ key + ", values=" + values + ">";
+	}
+
+	
+
+	public String toString_showSize() {
 		return "\n<" + key + "," + values.size()+ ">";
 	}
 	
@@ -41,6 +52,8 @@ public class GroupByPair {
 		  Collections.sort(list, comparator);
 		  return list;
 		}
+
+
 
 
 }

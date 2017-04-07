@@ -4,48 +4,74 @@ import java.util.List;
 
 public class Reducer {
 	
-	 public static List <GroupByPair> reducerOutput(List <GroupByPair>collectionOfPair)
+	 public static List <GroupByPair> combineReducerInput(List <GroupByPair>collectionOfPair)
 	 {
 		 String strtemp="";
 		 String strNext="";
+		 GroupByPair pairNext;
+		 GroupByPair pairInProcessing=new GroupByPair();
+		 List <Integer> list=new ArrayList <Integer> ();
+		
+		 //sort the list of GroupByPair
 		 GroupByPairComparator comparatorOfGroupByPair=new GroupByPairComparator();
 		 GroupByPair.sort(collectionOfPair, comparatorOfGroupByPair);
+		 
+		 
 		 List <GroupByPair> collectionOfGroupByPair=new ArrayList <GroupByPair> ();
-		 int n=1;
+		 
 		 Iterator <GroupByPair> it =collectionOfPair.iterator();
+		 
 		 while (  it.hasNext() )
 		 {
-			 strNext=it.next().getKey();
+			 pairNext=it.next();
+			 strNext=pairNext.getKey();
+			
+				
+			 //if this key equals next key
 			 
 			 if(strtemp.equals(strNext))
 			 {
-				 n++;
+				 list.add(pairInProcessing.getValues().size());
 			 }
+			 //if this key does not equal 
 			 else
 			 {
 				
 				 if(!strtemp.equals(""))
 				 {
-					 
-					 List <Integer> list=new ArrayList <Integer> ();
-					 for(int i=0;i<n;i++)
-						 list.add(1);
+					
+					 list.add(pairInProcessing.getValues().size());
 					 collectionOfGroupByPair.add(new GroupByPair(strtemp,list)); 
-					 n=1;
+					 list.clear();
 				 }
-				 
+				 pairInProcessing=pairNext;
 				 strtemp=strNext;
-				
 			 } 
 			 
 		 }
-		 
-		 List <Integer> list=new ArrayList <Integer> ();
-		 for(int i=0;i<n;i++)
-			 list.add(1);
+		// List <Integer> list=new ArrayList <Integer> ();
+		 list.add(pairInProcessing.getValues().size());
 		 collectionOfGroupByPair.add(new GroupByPair(strtemp,list)); 
+		 
 		 
 		 return collectionOfGroupByPair;
 	 }
+	 
+	 public static void main(String [] args)
+	 {
+		 List <GroupByPair> listPair=new ArrayList <GroupByPair>();
+		 List <Integer> listInt=new ArrayList<Integer>();
+		 listInt.add(1);
+		 listInt.add(2);
+		 GroupByPair g1=new GroupByPair("apple", listInt);
+		 GroupByPair g2=new GroupByPair("banana", listInt);
+		 listPair.add(g1);
+		 listPair.add(g1);
+		 List <GroupByPair> reList= combineReducerInput(listPair);
+		 System.out.println(reList);
+		 
+	 }
+	 
+	 
 
 }
