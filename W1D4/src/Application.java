@@ -103,11 +103,20 @@ public class Application {
 
 		// ----------------------------Reducer Output-----------------------
 
+		List <List<GroupByPair>> reducerOutputs =new ArrayList<List<GroupByPair>>();
+		
+		for (int i = 0; i < numOfReducers; i++) {
+			List<GroupByPair> listPairTemp = new ArrayList<GroupByPair>();
+			reducerOutputs.add(listPairTemp);
+
+		}
 		for (int i = 0; i < numOfReducers; i++) {
 			System.out.println("---------------------------Reducer" + i + " Output-------------");
-			List<GroupByPair> collectionOfGroupByPair = reducer.reducerOutput(reducerInputs.get(i));
+			List<GroupByPair> tempList=new ArrayList<GroupByPair>();
+			tempList=reducer.reducerOutput(reducerInputs.get(i));
+			reducerOutputs.add(tempList);
 
-			for (Iterator<GroupByPair> it_2 = collectionOfGroupByPair.iterator(); it_2.hasNext();) {
+			for (Iterator<GroupByPair> it_2 = tempList.iterator(); it_2.hasNext();) {
 				GroupByPair temp = it_2.next();
 				System.out.println(temp.toString());
 			}
