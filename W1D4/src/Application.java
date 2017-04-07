@@ -98,10 +98,15 @@ public class Application {
 		}
 
 		Reducer reducer = new Reducer();
+		List<List<GroupByPair>> reducerInputsAfterCombining = new ArrayList<List<GroupByPair>>();
 		for (int i = 0; i < numOfReducers; i++) {
 			System.out.println("---------------------------Reducer" + i + " Input-------------");
 			//System.out.println(reducerInputs.get(i));
-			System.out.println(reducer.combineReducerInput(reducerInputs.get(i)).toString());
+			
+			
+			List<GroupByPair> tempList=reducer.combineReducerInput(reducerInputs.get(i));
+			 reducerInputsAfterCombining.add(tempList);
+			System.out.println(tempList);
 		}
 
 		// ----------------------------Reducer Output-----------------------
@@ -116,9 +121,11 @@ public class Application {
 		for (int i = 0; i < numOfReducers; i++) {
 			System.out.println("---------------------------Reducer" + i + " Output-------------");
 			List<GroupByPair> tempList=new ArrayList<GroupByPair>();
-			tempList=reducer.combineReducerInput(reducerInputs.get(i));
+			tempList=reducer.reducerOutput(reducerInputsAfterCombining.get(i));
 			reducerOutputs.add(tempList);
 
+			
+			
 			for (Iterator<GroupByPair> it_2 = tempList.iterator(); it_2.hasNext();) {
 				GroupByPair temp = it_2.next();
 				System.out.println(temp.toString());

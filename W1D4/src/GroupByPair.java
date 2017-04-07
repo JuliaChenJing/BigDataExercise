@@ -23,7 +23,7 @@ public class GroupByPair {
 	
 	@Override
 	public String toString() {
-		return "\n<"+ key + ", values=" + values + ">";
+		return "\n<"+ key + ", " + values + ">";
 	}
 
 	
