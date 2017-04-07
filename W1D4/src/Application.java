@@ -17,8 +17,7 @@ public class Application {
 		List<String> inputSplits = new ArrayList<String>();
 		int numOfReducers = 4;
 
-		System.out.println("Number of Input-Splits:" + inputSplits.size());
-		System.out.println("Number of Reducers:" + numOfReducers);
+		
 
 		try {
 			inputSplits.add(readFile("0.txt"));
@@ -29,7 +28,8 @@ public class Application {
 			// TODO Auto-generated catch block
 			System.out.println("---" + e.getMessage());
 		}
-
+		System.out.println("Number of Input-Splits:" + inputSplits.size());
+		System.out.println("Number of Reducers:" + numOfReducers);
 		 
 		for (int i = 0; i < inputSplits.size(); i++) {
 			System.out.println("---------------------------Mapper" + i + " Input-------------");

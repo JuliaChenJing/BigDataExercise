@@ -48,10 +48,10 @@ public class Reducer {
 	
 					 list=new ArrayList <Integer> ();
 				 }
-				 pairInProcessing=pairNext;
-				 strtemp=strNext;
+				
 			 } 
-			 
+			 pairInProcessing=pairNext;
+			 strtemp=strNext;
 		 }
 		// List <Integer> list=new ArrayList <Integer> ();
 		 list.add(pairInProcessing.getValues().size());
@@ -102,16 +102,20 @@ public class Reducer {
 		 List <GroupByPair> listPair=new ArrayList <GroupByPair>();
 		 List <Integer> listInt=new ArrayList<Integer>();
 		 listInt.add(1);
-		 listInt.add(1);
 		 List <Integer> listInt2=new ArrayList<Integer>();
 		 listInt2.add(1);
-		 GroupByPair g1=new GroupByPair("apple", listInt);
-		 GroupByPair g2=new GroupByPair("banana", listInt2);
-		 GroupByPair g3=new GroupByPair("orange", listInt2);
+		 listInt2.add(1);
+		 GroupByPair g1=new GroupByPair("eat", listInt);
+		 GroupByPair g2=new GroupByPair("eat", listInt);
+		 GroupByPair g3=new GroupByPair("mat", listInt2);
+		 GroupByPair g4=new GroupByPair("mat", listInt);
+		
 		 listPair.add(g1);
-		 listPair.add(g1);
+		 
 		 listPair.add(g2);
 		 listPair.add(g3);
+		 listPair.add(g4);
+		
 		 System.out.println("\nprevious list:"+ listPair);
 		 List <GroupByPair> reList= combineReducerInput(listPair);
 		 System.out.println("\nresult list:"+reList);
