@@ -12,8 +12,15 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
         
 public class WordCount {
-       //class Map is a static inner class
- public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
+        
+    
+        /*A non-static nested class has full access to the members of the class within which it is nested. 
+        A static nested class does not have a reference to a nesting instance, so a static nested class
+        cannot invoke non-static methods or access non-static fields of an instance of the class within which
+        it is nested.*/
+        
+           //class Map is a static nested class
+  public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
     private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
         //method map
@@ -25,8 +32,8 @@ public class WordCount {
             context.write(word, one);
         }
     }
- } 
-        //class Reduce is a static inner class
+  } 
+        //class Reduce is a static nested class
  public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
         //method reduce
     public void reduce(Text key, Iterable<IntWritable> values, Context context) 
@@ -40,21 +47,21 @@ public class WordCount {
  }
         //main method
  public static void main(String[] args) throws Exception {
-    Configuration conf = new Configuration();
-        
-        Job job = new Job(conf, "wordcount");
+         
+    Configuration conf = new Configuration(); 
+    Job job = new Job(conf, "wordcount");
     
-    job.setOutputKeyClass(Text.class);
-    job.setOutputValueClass(IntWritable.class);
+    job.setOutputKeyClass(Text.class);//set output key class
+    job.setOutputValueClass(IntWritable.class);//set output value class
         
-    job.setMapperClass(Map.class);
-    job.setReducerClass(Reduce.class);
+    job.setMapperClass(Map.class);//set mapper class
+    job.setReducerClass(Reduce.class);//set reducer class
         
-    job.setInputFormatClass(TextInputFormat.class);
-    job.setOutputFormatClass(TextOutputFormat.class);
+    job.setInputFormatClass(TextInputFormat.class); //st input format
+    job.setOutputFormatClass(TextOutputFormat.class);//set output format
         
-    FileInputFormat.addInputPath(job, new Path(args[0]));
-    FileOutputFormat.setOutputPath(job, new Path(args[1]));
+    FileInputFormat.addInputPath(job, new Path(args[0]));//add input path
+    FileOutputFormat.setOutputPath(job, new Path(args[1]));//add output path
         
     job.waitForCompletion(true);
  }
