@@ -23,29 +23,29 @@ public class WordCount {
 	 */
 
 	// class Map is a static nested class
-	public static class Map extends
-			Mapper<LongWritable, Text, Text, IntWritable> {
+	public static class Map extends Mapper<LongWritable, Text, Text, IntWritable> {
+		
+		//set one as 1 as the value of the emit key-value pair
 		private final static IntWritable one = new IntWritable(1);
 		private Text word = new Text();
 
-		// method map
-		public void map(LongWritable key, Text value, Context context)
-				throws IOException, InterruptedException {
+		// method map  key is not used in this method
+		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-			StringTokenizer tokenizer = new StringTokenizer(line);
+			StringTokenizer tokenizer = new StringTokenizer(line); //put the line into a tokenizer
 			while (tokenizer.hasMoreTokens()) {
-				word.set(tokenizer.nextToken());
-				context.write(word, one);
+				word.set(tokenizer.nextToken());//assign next token to word
+				context.write(word, one);//emit (word, 1)
 			}
 		}
 	}
 
 	// class Reduce is a static nested class
-	public static class Reduce extends
-			Reducer<Text, IntWritable, Text, IntWritable> {
+	public static class Reduce extends Reducer<Text, IntWritable, Text, IntWritable> {
 		// method reduce
-		public void reduce(Text key, Iterable<IntWritable> values,
-				Context context) throws IOException, InterruptedException {
+		//for loop of key is automatically controlled by the framework
+		public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException 
+		{
 			int sum = 0;
 			for (IntWritable val : values) {
 				sum += val.get();
