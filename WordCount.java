@@ -59,6 +59,7 @@ public class WordCount {
 
 		Configuration conf = new Configuration();
 		Job job = new Job(conf, "wordcount");
+		job.setJarByClass(WordCount.class);//added by Julia 20170418
 
 		job.setOutputKeyClass(Text.class);// set output key class
 		job.setOutputValueClass(IntWritable.class);// set output value class
