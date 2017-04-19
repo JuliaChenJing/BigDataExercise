@@ -105,7 +105,7 @@ public class Stripes {
     //reducer
     public static class Reduce extends Reducer<Text, Text, Text, Text> {
     	
-        TreeSet<Pair> priorityQueue = new TreeSet<>();
+    
 
         public void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
@@ -113,7 +113,6 @@ public class Stripes {
             java.util.Map<String, Integer> stripe = new HashMap<>();
             
             double totalCount = 0;
-            String keyStr = key.toString();
 
             for (Text value : values) {
                 String[] stripes = value.toString().split(",");
@@ -130,18 +129,6 @@ public class Stripes {
                 }
             }
 
-            for (java.util.Map.Entry<String, Integer> entry : stripe.entrySet()) {
-                priorityQueue.add(new Pair(entry.getValue() / totalCount, keyStr, entry.getKey()));
-
-                if (priorityQueue.size() > 100) {
-                    priorityQueue.pollFirst();
-                }
-            }
-            
-            /*while (!priorityQueue.isEmpty()) {
-                Pair pair = priorityQueue.pollLast();
-                context.write(new Text(pair.key+"--> "+pair.value), new Text(String.valueOf(pair.relativeFrequency)));
-            }*/
             
             StringBuilder stripeStr = new StringBuilder();
             for (java.util.Map.Entry entry : stripe.entrySet()) {
