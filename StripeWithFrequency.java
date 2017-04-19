@@ -12,8 +12,8 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
-
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.TreeSet;
 import java.lang.Object;
@@ -145,7 +145,11 @@ public class Stripes {
             
             StringBuilder stripeStr = new StringBuilder();
             for (java.util.Map.Entry entry : stripe.entrySet()) {
-                stripeStr.append(entry.getKey()).append(":").append(new Double(entry.getValue().toString())/totalCount).append("   ");
+            	
+            	double d=new Double(entry.getValue().toString())/totalCount;
+            	d=Math.round(d*100)/100;
+            	
+                stripeStr.append(entry.getKey()).append(":").append(d).append("   ");
             }
             
             context.write(key, new Text(stripeStr.toString()));
