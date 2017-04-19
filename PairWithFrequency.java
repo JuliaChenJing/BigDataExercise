@@ -1,3 +1,4 @@
+package pairs;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -32,8 +33,8 @@ public class Pairs {
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
-        FileInputFormat.addInputPath(job, new Path(args[0] + "/" + args[1]));
-        FileOutputFormat.setOutputPath(job, new Path(args[2] + "/rfpairs"));
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         job.waitForCompletion(true);
     }
@@ -98,16 +99,13 @@ public class Pairs {
                     priorityQueue.pollFirst();
                 }
             }
-        }
-
-        protected void cleanup(Context context)
-                throws IOException,
-                InterruptedException {
             while (!priorityQueue.isEmpty()) {
                 Pair pair = priorityQueue.pollLast();
-                context.write(new Text(pair.key), new Text(pair.value));
+                context.write(new Text(pair.key+"--> "+pair.value), new Text(String.valueOf(pair.relativeFrequency)));
             }
         }
+
+       
 
         // inner class Pair
         class Pair implements Comparable<Pair> {
