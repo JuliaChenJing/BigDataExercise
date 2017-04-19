@@ -82,16 +82,20 @@ public class Pairs {
 
         public void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
+        	//   A10,*      {1,4} 
+        	//   A10,A12    (1,2 }
+        	//   A10,A14     {1,1}
             String keyStr = key.toString();
             int count = 0;
 
             for (Text value : values) {
-                count += Integer.parseInt(value.toString());
+                count += Integer.parseInt(value.toString());//1+4
             }
 
-            if (keyStr.matches(".*\\*")) {
+            if (keyStr.matches(".*\\*")) {//if the next one is a " A12,*" ,that means the one with A10 as a starter finishes
                 totalCount = count;
-            } else {
+            } 
+            else {
                 String[] pair = keyStr.split(",");
                 priorityQueue.add(new Pair(count / totalCount, pair[0], pair[1]));
 
