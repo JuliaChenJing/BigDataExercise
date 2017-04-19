@@ -15,12 +15,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-/**
- * Author: Jiankai Dang
- * Date: 12/8/13
- */
 public class Stripes {
     public static void main(String[] args) throws Exception {
+        
         Job job = new Job(new Configuration());
         job.setJarByClass(Stripes.class);
 
@@ -43,6 +40,7 @@ public class Stripes {
     }
 
     public static class Map extends Mapper<LongWritable, Text, Text, Text> {
+        
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String[] words = value.toString().split(" ");
 
