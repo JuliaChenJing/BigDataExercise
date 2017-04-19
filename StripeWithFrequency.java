@@ -12,12 +12,13 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.TreeSet;
-
+import java.lang.Object;
 public class Stripes {
-    
+	
     public static void main(String[] args) throws Exception {
         
         Job job = new Job(new Configuration());
@@ -45,17 +46,18 @@ public class Stripes {
     public static class Map extends Mapper<LongWritable, Text, Text, Text> {
         
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            
+        	
             String[] words = value.toString().split(" ");
 
             for (String word : words) {
                 if (word.matches("^\\w+$")) {
+                	//initiate a HashMap stripe
                     java.util.Map<String, Integer> stripe = new HashMap<>();
 
                     for (String term : words) {
                         if (term.matches("^\\w+$") && !term.equals(word)) {
                             Integer count = stripe.get(term);
-                            stripe.put(term, (count == null ? 0 : count) + 1);
+                            stripe.put(term, (count == null ? 0 : count) + 1);// stripe.put++
                         }
                     }
 
@@ -65,7 +67,7 @@ public class Stripes {
                     }
 
                     if (!stripe.isEmpty()) {
-                        context.write(new Text(word), new Text(stripeStr.toString()));
+                        context.write(new Text(word), new Text(stripeStr.toString()));//key is word, value is the HashMap stripe
                     }
                 }
             }
@@ -87,7 +89,7 @@ public class Stripes {
                     int count = Integer.parseInt(termCount[1]);
 
                     Integer countSum = stripe.get(term);
-                    stripe.put(term, (countSum == null ? 0 : countSum) + count);
+                    stripe.put(term, (countSum == null ? 0 : countSum) + count);//combiner
                 }
             }
 
@@ -102,11 +104,14 @@ public class Stripes {
 
     //reducer
     public static class Reduce extends Reducer<Text, Text, Text, Text> {
+    	
         TreeSet<Pair> priorityQueue = new TreeSet<>();
 
         public void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
+        	//initiate the HashMap stripe
             java.util.Map<String, Integer> stripe = new HashMap<>();
+            
             double totalCount = 0;
             String keyStr = key.toString();
 
@@ -114,7 +119,7 @@ public class Stripes {
                 String[] stripes = value.toString().split(",");
 
                 for (String termCountStr : stripes) {
-                    String[] termCount = termCountStr.split(":");
+                    String[] termCount = termCountStr.split(":");//stripeStr.append(entry.getKey()).append(":").append(entry.getValue()).append(",");
                     String term = termCount[0];
                     int count = Integer.parseInt(termCount[1]);
 
@@ -133,10 +138,18 @@ public class Stripes {
                 }
             }
             
-            while (!priorityQueue.isEmpty()) {
+            /*while (!priorityQueue.isEmpty()) {
                 Pair pair = priorityQueue.pollLast();
                 context.write(new Text(pair.key+"--> "+pair.value), new Text(String.valueOf(pair.relativeFrequency)));
+            }*/
+            
+            StringBuilder stripeStr = new StringBuilder();
+            for (java.util.Map.Entry entry : stripe.entrySet()) {
+                stripeStr.append(entry.getKey()).append(":").append(new Double(entry.getValue().toString())/totalCount).append("   ");
             }
+            
+            context.write(key, new Text(stripeStr.toString()));
+
         }
 
        
