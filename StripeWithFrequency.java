@@ -1,4 +1,5 @@
 package stripes;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -33,8 +34,8 @@ public class Stripes {
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
-        FileInputFormat.addInputPath(job, new Path(args[0] + "/" + args[1]));
-        FileOutputFormat.setOutputPath(job, new Path(args[2] + "/rfstripes"));
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         job.waitForCompletion(true);
     }
@@ -126,16 +127,14 @@ public class Stripes {
                     priorityQueue.pollFirst();
                 }
             }
-        }
-
-        protected void cleanup(Context context)
-                throws IOException,
-                InterruptedException {
+            
             while (!priorityQueue.isEmpty()) {
                 Pair pair = priorityQueue.pollLast();
-                context.write(new Text(pair.key), new Text(pair.value));
+                context.write(new Text(pair.key+"--> "+pair.value), new Text(String.valueOf(pair.relativeFrequency)));
             }
         }
+
+       
 
         class Pair implements Comparable<Pair> {
             double relativeFrequency;
