@@ -93,6 +93,7 @@ public class PairmapperStripereducer {
 			java.util.Map<String, Integer> stripe = new HashMap<>();
 
 			String keyStr = key.toString();
+			String newKey="";
 			int count = 0;
 
 			for (Text value : values) {
@@ -102,7 +103,7 @@ public class PairmapperStripereducer {
 			if (!keyStr.matches(".*\\*")) {// if the key "A10,A12" finished
 
 				String[] pair = keyStr.split(",");
-				keyStr = pair[0];
+				newKey = pair[0];
 				Integer countSum = stripe.get(pair[1]);
 				stripe.put(pair[1], (countSum == null ? 0 : countSum) + count);
 
@@ -111,7 +112,7 @@ public class PairmapperStripereducer {
 				totalCount = count;// for a certain kind of key,
 
 			}
-			
+
 			StringBuilder stripeStr = new StringBuilder();
 			for (java.util.Map.Entry entry : stripe.entrySet()) {
 
@@ -119,29 +120,31 @@ public class PairmapperStripereducer {
 
 				stripeStr.append(entry.getKey()).append(":")
 						.append(String.format("%.2f", d)).append("   ");
-				context.write(new Text(keyStr), new Text(stripeStr.toString()));
 			}
+
+			context.write(new Text(newKey), new Text(stripeStr.toString()));
 
 		}
 
-		class Pair implements Comparable<Pair> {
-			double relativeFrequency;
-			String key;
-			String value;
+	}
 
-			Pair(double relativeFrequency, String key, String value) {
-				this.relativeFrequency = relativeFrequency;
-				this.key = key;
-				this.value = value;
-			}
+	class Pair implements Comparable<Pair> {
+		double relativeFrequency;
+		String key;
+		String value;
 
-			@Override
-			public int compareTo(Pair pair) {
-				if (this.relativeFrequency >= pair.relativeFrequency) {
-					return 1;
-				} else {
-					return -1;
-				}
+		Pair(double relativeFrequency, String key, String value) {
+			this.relativeFrequency = relativeFrequency;
+			this.key = key;
+			this.value = value;
+		}
+
+		@Override
+		public int compareTo(Pair pair) {
+			if (this.relativeFrequency >= pair.relativeFrequency) {
+				return 1;
+			} else {
+				return -1;
 			}
 		}
 	}
