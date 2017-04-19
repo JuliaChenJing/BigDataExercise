@@ -83,31 +83,36 @@ public class PairmapperStripereducer {
 	    //reducer
 	    public static class Reduce extends Reducer<Text, Text, Text, Text> {
 	    	
-	    
+	       
 
 	        public void reduce(Text key, Iterable<Text> values, Context context)
 	                throws IOException, InterruptedException {
+	        
+	            //   A10,*      {1,4} 
+	        	//   A10,A12    (1,2 }
+	        	//   A10,A14     {1,1}
+	        	 double totalCount = 0;
 	        	//initiate the HashMap stripe
 	            java.util.Map<String, Integer> stripe = new HashMap<>();
 	            
-	            double totalCount = 0;
+	       
+	            String keyStr = key.toString();
+	            int count = 0;
 
 	            for (Text value : values) {
-	                String[] stripes = value.toString().split(",");
-
-	                for (String termCountStr : stripes) {
-	                    String[] termCount = termCountStr.split(":");//stripeStr.append(entry.getKey()).append(":").append(entry.getValue()).append(",");
-	                    String term = termCount[0];
-	                    int count = Integer.parseInt(termCount[1]);
-
-	                    Integer countSum = stripe.get(term);
-	                    stripe.put(term, (countSum == null ? 0 : countSum) + count);
-
-	                    totalCount += count;
-	                }
+	                count += Integer.parseInt(value.toString());
 	            }
 
-	            
+	            if (keyStr.matches(".*\\*")) {//if the key "A10,A12" finished
+	                totalCount = count;// for a certain kind of key, 
+	            } 
+	            else {
+	                String[] pair = keyStr.split(",");
+	                Integer countSum = stripe.get(pair[1]);
+                    stripe.put(pair[1], (countSum == null ? 0 : countSum) + count);
+                    keyStr=pair[0];
+	            }
+	           
 	            StringBuilder stripeStr = new StringBuilder();
 	            for (java.util.Map.Entry entry : stripe.entrySet()) {
 	            	
@@ -116,7 +121,7 @@ public class PairmapperStripereducer {
 	                stripeStr.append(entry.getKey()).append(":").append(String.format("%.2f", d)).append("   ");
 	            }
 	            
-	            context.write(key, new Text(stripeStr.toString()));
+	            context.write(new Text(keyStr), new Text(stripeStr.toString()));
 
 	        }
 
