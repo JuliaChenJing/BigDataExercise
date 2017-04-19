@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.TreeSet;
 
 public class Stripes {
+    
     public static void main(String[] args) throws Exception {
         
         Job job = new Job(new Configuration());
@@ -40,9 +41,11 @@ public class Stripes {
         job.waitForCompletion(true);
     }
 
+    //mapper
     public static class Map extends Mapper<LongWritable, Text, Text, Text> {
         
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            
             String[] words = value.toString().split(" ");
 
             for (String word : words) {
@@ -69,6 +72,7 @@ public class Stripes {
         }
     }
 
+    //combiner
     private static class Combine extends Reducer<Text, Text, Text, Text> {
         public void reduce(Text key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
@@ -96,6 +100,7 @@ public class Stripes {
         }
     }
 
+    //reducer
     public static class Reduce extends Reducer<Text, Text, Text, Text> {
         TreeSet<Pair> priorityQueue = new TreeSet<>();
 
