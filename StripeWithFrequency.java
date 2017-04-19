@@ -147,9 +147,8 @@ public class Stripes {
             for (java.util.Map.Entry entry : stripe.entrySet()) {
             	
             	double d=new Double(entry.getValue().toString())/totalCount;
-            	d=Math.round(d*100)/100;
             	
-                stripeStr.append(entry.getKey()).append(":").append(d).append("   ");
+                stripeStr.append(entry.getKey()).append(":").append(String.format("%.2f", d)).append("   ");
             }
             
             context.write(key, new Text(stripeStr.toString()));
