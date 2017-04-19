@@ -83,8 +83,7 @@ public class PairmapperStripereducer {
 	    //reducer
 	    public static class Reduce extends Reducer<Text, Text, Text, Text> {
 	    	
-	       
-
+	      
 	        public void reduce(Text key, Iterable<Text> values, Context context)
 	                throws IOException, InterruptedException {
 	        
@@ -103,25 +102,25 @@ public class PairmapperStripereducer {
 	                count += Integer.parseInt(value.toString());
 	            }
 
-	            if (keyStr.matches(".*\\*")) {//if the key "A10,A12" finished
-	                totalCount = count;// for a certain kind of key, 
+	            if (!keyStr.matches(".*\\*")) {//if the key "A10,A12" finished
+	            	 String[] pair = keyStr.split(",");
+		                Integer countSum = stripe.get(pair[1]);
+	                    stripe.put(pair[1], (countSum == null ? 0 : countSum) + count);
+	                    keyStr=pair[0];
 	            } 
 	            else {
-	                String[] pair = keyStr.split(",");
-	                Integer countSum = stripe.get(pair[1]);
-                    stripe.put(pair[1], (countSum == null ? 0 : countSum) + count);
-                    keyStr=pair[0];
+	               
+                
+                    totalCount = count;// for a certain kind of key, 
+                    StringBuilder stripeStr = new StringBuilder();
+    	            for (java.util.Map.Entry entry : stripe.entrySet()) {
+    	            	
+    	            	double d=new Double(entry.getValue().toString())/totalCount;
+    	            	
+    	                stripeStr.append(entry.getKey()).append(":").append(String.format("%.2f", d)).append("   ");
+    	            }
+	                context.write(new Text(keyStr), new Text(stripeStr.toString()));
 	            }
-	           
-	            StringBuilder stripeStr = new StringBuilder();
-	            for (java.util.Map.Entry entry : stripe.entrySet()) {
-	            	
-	            	double d=new Double(entry.getValue().toString())/totalCount;
-	            	
-	                stripeStr.append(entry.getKey()).append(":").append(String.format("%.2f", d)).append("   ");
-	            }
-	            
-	            context.write(new Text(keyStr), new Text(stripeStr.toString()));
 
 	        }
 
