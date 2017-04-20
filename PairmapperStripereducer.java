@@ -1,152 +1,313 @@
 package pairmapperstripereducer;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.TreeSet;
-
 import org.apache.hadoop.conf.Configuration;
+//import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Reducer.Context;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+//import org.apache.hadoop.oncrpc.security.SysSecurityHandler;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 
 public class PairmapperStripereducer {
 
-	public static void main(String[] args) throws Exception {
-		Job job = new Job(new Configuration());
-		job.setJarByClass(PairmapperStripereducer.class);
+    /******************* MAPPER *********************/
+    public static class CrystalBallHybridMapper extends Mapper<LongWritable, Text, Pair, IntWritable>
+    {
+        Map<Pair, Integer> bucket;
 
-		job.setNumReduceTasks(1);
+        @Override
+        protected void setup(Mapper<LongWritable, Text, Pair, IntWritable>.Context context) throws IOException, InterruptedException
+        {
+            bucket = new HashMap<>();
+            super.setup(context);
+        }
 
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
+        @Override
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
+        {
+            String[] productIds = value.toString().split("\\s+");
 
-		job.setMapperClass(Map.class);
-		job.setCombinerClass(Combine.class);
-		job.setReducerClass(Reduce.class);
+            for(int i = 1; i < productIds.length - 1; i++)
+            {
+                String currentProductId = productIds[i];
+                boolean rangeCompleted = false;
 
-		job.setInputFormatClass(TextInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
+                for(int j = i + 1; ((j < productIds.length) && !rangeCompleted); j++)
+                {
+                    String currentNeighborId = productIds[j];
+                    if(currentProductId.equals(currentNeighborId))
+                    {
+                        rangeCompleted = true;
+                    }
+                    else
+                    {
+                        Pair newPair = new Pair(currentProductId, currentNeighborId);
+                        if(!bucket.containsKey(newPair))
+                        {
+                            bucket.put(newPair, 0);
+                        }
+                        bucket.put(newPair,  bucket.get(newPair) + 1);
+                    }
+                }
+            }
+        }
 
-		FileInputFormat.addInputPath(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        @Override
+        protected void cleanup(Mapper<LongWritable, Text, Pair, IntWritable>.Context context) throws IOException, InterruptedException
+        {
+            Iterator<Pair> bucketIterator = bucket.keySet().iterator();
 
-		job.waitForCompletion(true);
-	}
+            while(bucketIterator.hasNext())
+            {
+                Pair key = bucketIterator.next();
+                context.write(key, new IntWritable(bucket.get(key)));
+            }
+            super.cleanup(context);
+        }
+    }
 
-	// mapper
-	public static class Map extends Mapper<LongWritable, Text, Text, Text> {
+    /************************ Partitioner ************************/
+    public static class CrystalBallHybridPartitioner extends Partitioner<Pair, IntWritable> {
+        @Override
+        public int getPartition(Pair pair, IntWritable intWritable, int i) {
+            if(Integer.parseInt(pair.getFirst()) < 50) return 0;
+            return 1;
+        }
+    }
 
-		public void map(LongWritable key, Text value, Context context)
-				throws IOException, InterruptedException {
-			String[] words = value.toString().split(" ");
 
-			for (String word : words) {
-				if (word.matches("^\\w+$")) {
-					int count = 0;
-					for (String term : words) {
-						if (term.matches("^\\w+$") && !term.equals(word)) {
-							context.write(new Text(word + "," + term),
-									new Text("1"));
-							count++;
-						}
-					}
-					context.write(new Text(word + ",*"),
-							new Text(String.valueOf(count)));
-				}
-			}
-		}
-	}
+            /************************ REDUCER ************************/
+    public static class CrystalBallHybridReducer extends Reducer<Pair, IntWritable, Text, Text>
+    {
+        CustomMapWritable stripe;
+        int totalNeighbors;
+        Text currentProductId;
 
-	// combiner
-	private static class Combine extends Reducer<Text, Text, Text, Text> {
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            super.setup(context);
+            stripe = new CustomMapWritable();
+            totalNeighbors = 0;
+            currentProductId = null;
+        }
 
-		public void reduce(Text key, Iterable<Text> values, Context context)
-				throws IOException, InterruptedException {
-			int count = 0;
-			for (Text value : values) {
-				count += Integer.parseInt(value.toString());
-			}
-			context.write(key, new Text(String.valueOf(count)));
-		}
-	}
+        @Override
+        public void reduce(Pair productNeighborPair, Iterable<IntWritable> frequencies, Context context) throws IOException, InterruptedException
+        {
+            Text currentProductNeighborId = new Text(productNeighborPair.getSecond());
 
-	// reducer
-	public static class Reduce extends Reducer<Text, Text, Text, Text> {
+            if(currentProductId == null)
+            {
+                currentProductId = new Text(productNeighborPair.getFirst());
+            }
+            else if( ! currentProductId.toString().equals(productNeighborPair.getFirst()))
+            {
+                Iterator<Writable> stripeIterator = stripe.keySet().iterator();
 
-		public void reduce(Text key, Iterable<Text> values, Context context)
-				throws IOException, InterruptedException {
+                while(stripeIterator.hasNext())
+                {
+                    Writable mapKey = stripeIterator.next();
+                    double average = ((double)((IntWritable)stripe.get(mapKey)).get()) / totalNeighbors;
+                    stripe.put(mapKey, new DoubleWritable(average));
+                }
+                context.write(currentProductId, new Text(stripe.toString()));
+                stripe = new CustomMapWritable();
+                totalNeighbors = 0;
+                currentProductId = new Text(productNeighborPair.getFirst());
+            }
+            int totalFrequency = 0;
+            for(IntWritable frequency : frequencies) {
+                totalFrequency += frequency.get();
+            }
+            totalNeighbors += totalFrequency;
 
-			// A10,* {1,4}
-			// A10,A12 (1,2 }
-			// A10,A14 {1,1}
-			double totalCount = 0;
-			// initiate the HashMap stripe
+            if( stripe.containsKey(currentProductNeighborId))
+            {
+                int sum = ((IntWritable)stripe.get(currentProductNeighborId)).get() + totalFrequency;
+                stripe.put(currentProductNeighborId, new IntWritable(sum));
+            }
+            else
+            {
+                stripe.put(currentProductNeighborId, new IntWritable(totalFrequency));
+            }
 
-			java.util.Map<String, Integer> stripe = new HashMap<>();
+        }
 
-			String keyStr = key.toString();
-			String newKey="";
-			int count = 0;
+        @Override
+        protected void cleanup(Context context) throws IOException, InterruptedException {
+            Iterator<Writable> stripeIterator = stripe.keySet().iterator();
 
-			for (Text value : values) {
-				count += Integer.parseInt(value.toString());
-			}
+            while(stripeIterator.hasNext())
+            {
+                Text mapKey = (Text) stripeIterator.next();
+                double average = ((double)((IntWritable)stripe.get(mapKey)).get()) / totalNeighbors;
+                stripe.put(mapKey, new DoubleWritable(average));
+            }
+            context.write(currentProductId, new Text(stripe.toString()));
+            super.cleanup(context);
+        }
 
-			if (!keyStr.matches(".*\\*")) {// if the key "A10,A12" finished
+    }
 
-				String[] pair = keyStr.split(",");
-				newKey = pair[0];
-				Integer countSum = stripe.get(pair[1]);
-				stripe.put(pair[1], (countSum == null ? 0 : countSum) + count);
+    public static class CustomMapWritable extends MapWritable{
+        public CustomMapWritable()
+        {
+            super();
+        }
+        @Override
+        public String toString()
+        {
+            Iterator<Writable> iterator = keySet().iterator();
+            String result = "{";
+            while(iterator.hasNext())
+            {
+                Text key = (Text)iterator.next();
+                Writable value = get(key);
+                result += "(" + key + ", " + value + "), ";
+            }
+            result += "}";
+            return result;
+        }
+    }
 
-			} else {
 
-				totalCount = count;// for a certain kind of key,
 
-			}
+    public static class Pair implements WritableComparable<Pair>, Writable
+    {
+        private String first;
+        private String second;
+        public String neighborWildCard = "*";
 
-			StringBuilder stripeStr = new StringBuilder();
-			for (java.util.Map.Entry entry : stripe.entrySet()) {
+        public Pair(){
+            super();
+        }
 
-				double d = new Double(entry.getValue().toString()) / totalCount;
+        public Pair(String first, String second){
+            super();
+            this.first = first;
+            this.second = second;
+        }
 
-				stripeStr.append(entry.getKey()).append(":")
-						.append(String.format("%.2f", d)).append("   ");
-			}
+        public Pair(String first)
+        {
+            super();
+            this.first = first;
+            this.second = neighborWildCard;
+        }
 
-			context.write(new Text(newKey), new Text(stripeStr.toString()));
+        public String getFirst() {
+            return first;
+        }
 
-		}
+        public void setFirst(String first) {
+            this.first = first;
+        }
 
-	}
+        public String getSecond() {
+            return second;
+        }
 
-	class Pair implements Comparable<Pair> {
-		double relativeFrequency;
-		String key;
-		String value;
+        public void setSecond(String second) {
+            this.second = second;
+        }
 
-		Pair(double relativeFrequency, String key, String value) {
-			this.relativeFrequency = relativeFrequency;
-			this.key = key;
-			this.value = value;
-		}
+        @Override
+        public void readFields(DataInput input) throws IOException {
+            first = input.readUTF();
+            second = input.readUTF();
+        }
 
-		@Override
-		public int compareTo(Pair pair) {
-			if (this.relativeFrequency >= pair.relativeFrequency) {
-				return 1;
-			} else {
-				return -1;
-			}
-		}
-	}
+        @Override
+        public void write(DataOutput output) throws IOException {
+            output.writeUTF(first);
+            output.writeUTF(second);
+        }
+
+        @Override
+        public int hashCode()
+        {
+            int prime = 31;
+            int result = 0;
+            result = prime * result + first.hashCode();
+            return prime * result + second.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if(this == obj) return true;
+            if(!(obj instanceof Pair)) return false;
+            Pair p = (Pair) obj;
+            if(! p.getFirst().equals(this.first)) return false;
+            return (p.getSecond().equals(this.second));
+        }
+
+        @Override
+        public String toString() {
+            return new String("[" + first + ", " + second + "]");
+        }
+
+        @Override
+        public int compareTo(Pair o) {
+            Pair p = (Pair) o;
+            int toReturn = 0;
+            if(! first.equals(p.getFirst())) return first.compareTo(p.getFirst());
+            if(isWildCard()) return -1;
+            if(o.isWildCard()) return 1;
+            if(p.isWildCard()) return -1;
+            return second.compareTo(p.getSecond());
+
+        }
+
+        public boolean isWildCard()
+        {
+            return second.equals(neighborWildCard);
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "PairmapperStripereducer");
+
+        job.setJarByClass(PairmapperStripereducer.class);
+        
+        //FileSystem fs = FileSystem.get(new Configuration());
+        //fs.delete(new Path("CrystalBallHybrid"), true);
+      
+
+        job.setMapperClass(CrystalBallHybridMapper.class);
+        job.setReducerClass(CrystalBallHybridReducer.class);
+
+        job.setNumReduceTasks(2);
+        job.setPartitionerClass(CrystalBallHybridPartitioner.class);
+
+        job.setMapOutputKeyClass(Pair.class);
+        job.setMapOutputValueClass(IntWritable.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+        
+       // FileInputFormat.addInputPath(job, new Path("input"));
+       // FileOutputFormat.setOutputPath(job, new Path("CrystalBallHybrid"));
+        
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+
 
 }
+
