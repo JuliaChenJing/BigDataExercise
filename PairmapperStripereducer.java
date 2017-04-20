@@ -38,7 +38,7 @@ public class PairmapperStripereducer {
         {
             String[] productIds = value.toString().split(" ");
 
-            for(int i = 1; i < productIds.length - 1; i++)
+            for(int i = 0; i < productIds.length - 1; i++)
             {
                 String currentProductId = productIds[i];
                 boolean rangeCompleted = false;
