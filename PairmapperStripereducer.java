@@ -36,7 +36,7 @@ public class PairmapperStripereducer {
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
         {
-            String[] productIds = value.toString().split("\\s+");
+            String[] productIds = value.toString().split(" ");
 
             for(int i = 1; i < productIds.length - 1; i++)
             {
@@ -81,8 +81,9 @@ public class PairmapperStripereducer {
     public static class CrystalBallHybridPartitioner extends Partitioner<Pair, IntWritable> {
         @Override
         public int getPartition(Pair pair, IntWritable intWritable, int i) {
-            if(Integer.parseInt(pair.getFirst()) < 50) return 0;
-            return 1;
+           // if(Integer.parseInt(pair.getFirst()) < 50) return 0;
+           // return 1;
+        	return pair.getFirst().hashCode()%2;
         }
     }
 
