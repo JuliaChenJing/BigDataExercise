@@ -22,8 +22,8 @@
  -				newKey = pair[0];		
  -				Integer countSum = stripe.get(pair[1]);		
  -				stripe.put(pair[1], (countSum == null ? 0 : countSum) + count);
- -			} else {		
- -		
+ -			}
+	 else {		
  -				totalCount = count;// for a certain kind of key,
 	 
 	                        StringBuilder stripeStr = new StringBuilder();		
