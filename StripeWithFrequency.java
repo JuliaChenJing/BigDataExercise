@@ -128,7 +128,6 @@ public class Stripes {
                     totalCount += count;
                 }
             }
-
             
             StringBuilder stripeStr = new StringBuilder();
             for (java.util.Map.Entry entry : stripe.entrySet()) {
