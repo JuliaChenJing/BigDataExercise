@@ -3,13 +3,9 @@
  -		
  -		public void reduce(Text key, Iterable<Text> values, Context context)		
  -				throws IOException, InterruptedException {		
- -		
- -			// A10,* {1,4}		
- -			// A10,A12 (1,2 }		
- -			// A10,A14 {1,1}		
+	
  -			double totalCount = 0;		
  -			// initiate the HashMap stripe		
- -		
  -			java.util.Map<String, Integer> stripe = new HashMap<>();		
  -		
  -			String keyStr = key.toString();		
@@ -42,6 +38,5 @@
  -						.append(String.format("%.2f", d)).append("   ");		
  -			}		
   		  
- -			context.write(new Text(newKey), new Text(stripeStr.toString()));		 +public class PairmapperStripereducer {
-  		  
+ -			context.write(new Text(newKey), new Text(stripeStr.toString()));		 
  -		}		
