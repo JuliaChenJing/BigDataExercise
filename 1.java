@@ -21,10 +21,7 @@
  -				String[] pair = keyStr.split(",");		
  -				newKey = pair[0];		
  -				Integer countSum = stripe.get(pair[1]);		
- -				stripe.put(pair[1], (countSum == null ? 0 : countSum) + count);	
-	 
-	                      
- -		
+ -				stripe.put(pair[1], (countSum == null ? 0 : countSum) + count);
  -			} else {		
  -		
  -				totalCount = count;// for a certain kind of key,
