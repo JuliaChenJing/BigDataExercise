@@ -1,4 +1,4 @@
-   // reducer		
+-   // reducer		
  -	public static class Reduce extends Reducer<Text, Text, Text, Text> {		
  -		
  -		public void reduce(Text key, Iterable<Text> values, Context context)		
