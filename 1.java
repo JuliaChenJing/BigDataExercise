@@ -16,7 +16,7 @@
  -				count += Integer.parseInt(value.toString());		
  -			}		
  -		
- -			if (!keyStr.matches(".*\\*")) {// if the key "A10,A12" finished		
+ -			if (!keyStr.matches(".*\\*")) {	
  -		
  -				String[] pair = keyStr.split(",");		
  -				newKey = pair[0];		
