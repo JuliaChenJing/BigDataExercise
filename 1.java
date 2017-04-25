@@ -28,15 +28,15 @@
  -				totalCount = count;// for a certain kind of key,
 	 
 	                        StringBuilder stripeStr = new StringBuilder();		
- -			for (java.util.Map.Entry entry : stripe.entrySet()) {		
+ -			        for (java.util.Map.Entry entry : stripe.entrySet()) {		
  -		
- -				double d = new Double(entry.getValue().toString()) / totalCount;		
+ -				    double d = new Double(entry.getValue().toString()) / totalCount;		
   		  
- -				stripeStr.append(entry.getKey()).append(":")		
+ -				    stripeStr.append(entry.getKey()).append(":")		
  -						.append(String.format("%.2f", d)).append("   ");		
- -			}		
+ -			         }		
   		  
- -			context.write(new Text(newKey), new Text(stripeStr.toString()));
+ -			        context.write(new Text(newKey), new Text(stripeStr.toString()));
  -		
  -			}		
  -		
