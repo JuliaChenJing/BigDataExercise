@@ -28,6 +28,7 @@
  -			} else {		
  -		
  -				totalCount = count;// for a certain kind of key,
+	 
 	                        StringBuilder stripeStr = new StringBuilder();		
  -			for (java.util.Map.Entry entry : stripe.entrySet()) {		
  -		
@@ -41,7 +42,7 @@
  -		
  -			}		
  -		
- -			StringBuilder stripeStr = new StringBuilder();		
+ -			StringBuilder stripeStr = new StringBuilder();	
  -			for (java.util.Map.Entry entry : stripe.entrySet()) {		
  -		
  -				double d = new Double(entry.getValue().toString()) / totalCount;		
